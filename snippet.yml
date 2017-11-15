@@ -1,0 +1,73 @@
+
+
+#  tasks:
+#    - name: pull down the gluster server image
+#      docker:
+#        registry: "registry.access.redhat.com"
+#        image: "registry.access.redhat.com/rhgs3/rhgs-server-rhel7"
+#        state: present
+#        insecure_registry: yes
+#
+#    - name: create glusterdata container
+#      command: docker run --name glusterdata  -v /etc/glusterfs:/etc/glusterfs:z -v /var/lib/glusterd:/var/lib/glusterd:z -v /var/log/glusterfs:/var/log/glusterfs:z -v /sys/fs/cgroup:/sys/fs/cgroup:ro registry.access.redhat.com/rhgs3/rhgs-server-rhel7 /usr/sbin/setup.sh
+#
+#    - name: create glusterfs server container
+#      command: docker run -d --restart=always --privileged=true --net=host --name gluster_server --volumes-from glusterdata -v /mnt/brick1:/mnt/container_brick1:z registry.access.redhat.com/rhgs3/rhgs-server-rhel7
+
+#- hosts: alpha
+#  sudo: true
+#
+#  pre_tasks:
+
+#
+#  tasks:
+#    - name: Проверка работы режима Swarm
+#      shell: 'docker info'
+#      register: docker_info
+#
+#    - name: Инициализировать режим Swarm
+#      shell: docker swarm init
+#      ignore_errors: yes
+#      when: "docker_info.stdout.find('Swarm: active') == -1"
+#
+#    - name: Получение токена
+#      shell: 'docker swarm join-token -q manager'
+#      register: swarm_token
+#
+#    - name: save token
+#      shell: 'docker swarm join-token -q manager > {{ data.mountpoint }}/swarm_token'
+#      ignore_errors: yes
+#
+#    - name: save IP entrypoint
+#      shell: 'hostname -I | cut -f1 -d" " > {{ data.mountpoint }}/swarm_entrypoint'
+#      ignore_errors: yes
+#
+
+
+
+#
+#- hosts: alpha
+#  sudo: true
+#
+#  tasks:
+#    - name: Проверка работы режима Swarm
+#      shell: 'docker info'
+#      register: docker_info
+#
+#    - name: Инициализировать режим Swarm
+#      shell: docker swarm init
+#      ignore_errors: yes
+#      when: "docker_info.stdout.find('Swarm: active') == -1"
+#
+#    - name: Получение токена
+#      shell: 'docker swarm join-token -q manager'
+#      register: swarm_token
+
+#alpha:
+#  type: master
+#
+#beta:
+#  type: node
+#
+#gamma:
+#  type: node
