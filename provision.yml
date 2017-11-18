@@ -85,6 +85,10 @@
         msg: "{{ token.stdout }}"
       when: hostname_fqdn.stdout == "beta"
 
+    - name: install app stack
+      command: 'docker stack deploy -c /vagrand/test.yml test'
+      when: hostname_fqdn.stdout == "beta"
+
   handlers:
     - name: restart Docker
       service:
