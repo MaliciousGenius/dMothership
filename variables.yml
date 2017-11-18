@@ -1,5 +1,7 @@
 ---
 
-kubeadm_join_token: 26f2dc.ac235fb4b8093fbb
+alpha:
+  ip: 172.16.0.200
 
-
+beta:
+  ip: 172.16.0.201

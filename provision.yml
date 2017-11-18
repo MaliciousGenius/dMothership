@@ -11,6 +11,14 @@
 - hosts: all
   sudo: true
 
+  vars_files:
+    - variables.yml
+
+  pre_tasks:
+    - name: Верификация имени хоста
+      shell: hostnamectl status | awk "/Static hostname/"'{ print $3 }'
+      register: hostname_fqdn
+
   tasks:
     - name: Обновить систему
       apt:
@@ -41,7 +49,7 @@
         pkg: python-pip
         state: present
 
-    - name: Добавить apt-ключь Doсker
+    - name: Добавить apt-ключ Doсker
       apt_key:
         url: "https://apt.dockerproject.org/gpg"
         state: present
@@ -59,44 +67,26 @@
         state: present
       notify: restart Docker
 
-    - name: Добавить apt-ключь Kubernetes
-      apt_key:
-        url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-        state: present
+    - name: Инициализация мастера
+      shell: "docker swarm init --advertise-addr {{ alpha.ip }}:2377"
+      when: hostname_fqdn.stdout == "alpha"
 
-    - name: Подключить репозиторий Kubernetes к менеджеру патетов apt
-      apt_repository:
-        repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
-        filename: "kubernetes"
-        state: present
+    - name: Получить ключ безопастности Docker
+      shell: "docker swarm join-token -q manager"
+      register: token
+      delegate_to: alpha
+      when: hostname_fqdn.stdout == "beta"
 
-    - name: Установка Kubernetes
-      apt:
-        pkg: "{{ item }}"
-        update_cache: yes
-        state: present
-      with_items:
-        - kubelet
-        - kubeadm
-        - kubernetes-cni
+    - name: Подключиться к Docker Swarm
+      shell: "docker swarm join --token {{ token.stdout }} {{ alpha.ip }}:2377"
+      when: hostname_fqdn.stdout == "beta"
+
+    - debug:
+        msg: "{{ token.stdout }}"
+      when: hostname_fqdn.stdout == "beta"
 
   handlers:
     - name: restart Docker
       service:
         name: docker
         state: restarted
-
-- hosts: alpha
-  sudo: true
-
-  vars_files:
-    - variables.yml
-
-  pre_tasks:
-    - name: Получить IP адрес публичной сети
-      shell: 'hostname -I | cut -f2 -d" "'
-      register: public_network_ip
-
-  tasks:
-    - name: Инициализация мастера
-      shell: "kubeadm init --token {{ kubeadm_join_token }} --apiserver-advertise-address {{ public_network_ip.stdout }}"

@@ -6,3 +6,6 @@
 2) Добавте запись "127.0.0.1    mothership.local" в файл ```/etc/hosts```.
 2) Клонируем репозиторий ```# git clone https://github.com/MaliciousGenius/dMothership.git```
 2) Запускаем ```cd dMothershipsu && vagrant up```
+
+alpha: 172.16.0.200 — master, minion
+beta: 172.16.0.201 — minion

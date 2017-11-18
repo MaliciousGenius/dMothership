@@ -71,3 +71,26 @@
 #
 #gamma:
 #  type: node
+
+
+
+#    - name: Добавить apt-ключ Kubernetes
+#      apt_key:
+#        url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+#        state: present
+#
+#    - name: Подключить репозиторий Kubernetes к менеджеру патетов apt
+#      apt_repository:
+#        repo: "deb http://apt.kubernetes.io/ kubernetes-{{ ansible_distribution_release }} main"
+#        filename: "kubernetes"
+#        state: present
+#
+#    - name: Установка Kubernetes
+#      apt:
+#        pkg: "{{ item }}"
+#        update_cache: yes
+#        state: present
+#      with_items:
+#        - kubelet
+#        - kubeadm
+#        - kubernetes-cni
