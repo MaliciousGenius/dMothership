@@ -86,7 +86,7 @@
       when: hostname_fqdn.stdout == "beta"
 
     - name: install app stack
-      command: 'docker stack deploy -c /vagrand/test.yml test'
+      command: 'docker stack deploy -c /vagrand/stacks/test.yml test'
       when: hostname_fqdn.stdout == "beta"
 
   handlers:
